@@ -9,12 +9,14 @@ import SwiftUI
 
 struct FolderView: View {
     var folderName: String = ""
+    var color: String = ""
+    
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: "folder.fill")
                 .resizable()
                 .scaledToFill()
-                .foregroundStyle(Color.blue)
+                .foregroundStyle(Color(hex: color))
                 .frame(width: 50, height: 50)
             
             Text(folderName)
