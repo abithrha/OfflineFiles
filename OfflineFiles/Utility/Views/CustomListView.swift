@@ -20,7 +20,10 @@ struct CustomListView: View {
             LazyVGrid (columns: columns, content: {
                 ForEach(folder) { folder in
                     NavigationLink {
-                        FilesView(folderEntity: folder, refresh: refresh)
+                        FilesView(
+                            folderEntity: folder,
+                            refresh: refresh
+                        )
                     } label: {
                         FolderView(
                             folderName: folder.name ?? "",
