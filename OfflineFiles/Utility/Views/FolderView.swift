@@ -10,6 +10,7 @@ import SwiftUI
 struct FolderView: View {
     var folderName: String = ""
     var color: String = ""
+    var isFavorite: Bool = true
     
     var body: some View {
         VStack(spacing: 4) {
@@ -19,12 +20,22 @@ struct FolderView: View {
                 .foregroundStyle(Color(hex: color))
                 .frame(width: 50, height: 50)
             
-            Text(folderName)
-                .font(.caption2)
-                .frame(width: 60, alignment: .leading)
-            
+            HStack(spacing: 0) {
+                Text(folderName)
+                    .font(.caption2)
+                    .frame(width: 60, alignment: .leading)
+                    .padding(.leading, 2)
+                
+                if isFavorite {
+                    Image(systemName: "star.fill")
+                        .resizable()
+                        .frame(width: 10, height: 10)
+                        .foregroundStyle(.yellow)
+                }
+            }
         }
-        .frame(width: 60)
+        .padding(.top)
+        .frame(width: 60, height: 100, alignment: .top)
     }
 }
 

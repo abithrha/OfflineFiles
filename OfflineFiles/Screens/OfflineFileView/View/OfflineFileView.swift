@@ -9,45 +9,48 @@ import SwiftUI
 
 struct OfflineFileView: View {
     @State var fileViewModel: OfflineFileViewModel = OfflineFileViewModel.init()
-    let columns = [GridItem(.adaptive(minimum: 80))]
     
     var body: some View {
         ZStack {
             NavigationStack {
-                ScrollView {
-                    LazyVGrid (columns: columns, content: {
-                        ForEach(fileViewModel.folders) { folder in
-                            FolderView(
-                                folderName: folder.name ?? "",
-                                color: folder.color ?? ""
-                            )
-                        }
-                    })
+                TabView {
+                    CustomListView(
+                        folder: fileViewModel.folders,
+                        toggleFavorite: fileViewModel.toggleFavorite(for:),
+                        deleteFolder: fileViewModel.deleteFolder(_:)
+                    ) {
+                        fileViewModel.saveAndFetchFolderData()
+                    }
+                    CustomListView(
+                        isFavoriteFolder: true, 
+                        folder: fileViewModel.favoriteFolder,
+                        toggleFavorite: fileViewModel.toggleFavorite(for:),
+                        deleteFolder: fileViewModel.deleteFolder(_:)
+                    ) {
+                        fileViewModel.saveAndFetchFolderData()
+                    }
                 }
-                .navigationTitle("Files")
+                .navigationTitle(StringConstant.folderLibrary)
                 .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        HStack {
-                            Text("Sort by")
-                            Picker("Sort by", selection: $fileViewModel.sortby) {
-                                ForEach(SortOption.allCases) { value in
-                                    Text(value.rawValue)
-                                }
-                            }
-                            Button {
-                                withAnimation {
-                                    fileViewModel.displayFolderAlert.toggle()
-                                }
-                            } label: {
-                                Image(systemName: "folder.badge.plus")
+                    ToolbarItem(placement: .topBarTrailing) {
+                        MenuView() { title in
+                            switch title {
+                            case "Created folder":
+                                fileViewModel.displayFolderAlert.toggle()
+                            case "Ascending":
+                                fileViewModel.sortFolders(sort: .ascending)
+                            case "Descending":
+                                fileViewModel.sortFolders(sort: .descending)
+                            case "Created Date":
+                                fileViewModel.sortFolders(sort: .createdDate)
+                            default: break
                             }
                         }
-                        
                     }
                 }
             }
             
-            Text("No Folders added")
+            Text(StringConstant.noFolders)
                 .font(.title)
                 .bold()
                 .hide(if: fileViewModel.folders.isEmpty)

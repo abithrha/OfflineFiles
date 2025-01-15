@@ -19,18 +19,29 @@ public class OfflineFileViewModel {
     var folderCreationDate: Date         = Date()
     var sortby: SortOption               = .none
     var folders: [FolderEntity]          = []
+    var favoriteFolder: [FolderEntity]   = []
     
     init() {
-        
-        coredataManager.fetchFolder { data in
-            self.folders = data
-//            for folder in self.folders {
-//                self.coredataManager.context.delete(folder)
-//            }
-//            self.coredataManager.save()
-        }
+        saveAndFetchFolderData(save: false)
     }
     
+    func toggleFavorite(for folder: FolderEntity) {
+        folder.isFavorite.toggle()
+        saveAndFetchFolderData()
+    }
+    
+    func deleteFolder(_ folder: FolderEntity) {
+        coredataManager.context.delete(folder)
+        saveAndFetchFolderData()
+    }
+    
+    func sortFolders(sort: SortOption) {
+        UserDefaults.standard.setSortOption(sort)
+        coredataManager.fetchFolder(sortby: sort) { data in
+            self.folders = data
+            self.favoriteFolder = data.filter({ $0.isFavorite })
+        }
+    }
     
     func addFolder() {
         let newFolder = FolderEntity(context: coredataManager.context)
@@ -48,11 +59,18 @@ public class OfflineFileViewModel {
         newFolder.creationDate = folderCreationDate
         newFolder.color = folderColor.toHex() ?? ""
         newFolder.isFavorite = isFavoriteFolder
-        coredataManager.save()
-        coredataManager.fetchFolder { data in
-            self.folders = data
-        }
+        saveAndFetchFolderData()
         resetFolderSettings()
+    }
+    
+    func saveAndFetchFolderData(save: Bool = true) {
+        if save {
+            coredataManager.save()
+        }
+        coredataManager.fetchFolder(sortby: UserDefaults.standard.getSortOption()) { data in
+            self.folders = data
+            self.favoriteFolder = data.filter({ $0.isFavorite })
+        }
     }
     
     func resetFolderSettings() {

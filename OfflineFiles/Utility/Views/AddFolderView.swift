@@ -25,14 +25,18 @@ struct AddFolderView: View {
                     displayFolderAlert.toggle()
                 }
             VStack {
-                Text("Create the folder")
+                Text(StringConstant.createFolder)
+                    .bold()
                 
                 VStack(spacing: 16) {
-                    TextField("Kindly enter folder name", text: $folderName, onEditingChanged: { _ in
-                        displayError = false
-                    })
+                    TextField(
+                        StringConstant.createPlaceHolder,
+                        text: $folderName,
+                        onEditingChanged: { _ in
+                            displayError = false
+                        })
                     .padding()
-                    .background(Color.red.opacity(0.3))
+                    .background(Color.blue.opacity(0.3))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .onSubmit {
                         displayError = folderName.isEmpty
@@ -40,14 +44,14 @@ struct AddFolderView: View {
                     .onChange(of: folderName) {
                         displayError = false
                     }
-                        
+                    
                     
                     ColorPicker(selection: $color, label: {
-                        Text("Select the Favorite color")
+                        Text(StringConstant.favoriteColor)
                     })
                     
                     HStack {
-                        Text("Set as favorite folder")
+                        Text(StringConstant.favoriteFolder)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Button(action: {
@@ -58,14 +62,10 @@ struct AddFolderView: View {
                         })
                     }
                     
-                    HStack {
-                        Image(systemName: "questionmark.folder.fill")
-                        
-                        Text("Please enter the folder name")
-                            .font(.caption)
-                    }
-                    .foregroundStyle(Color.red)
-                    .hide(if: displayError)
+                    Text(StringConstant.specifyTheFolder)
+                        .font(.caption)
+                        .foregroundStyle(Color.red)
+                        .hide(if: displayError)
                     
                     Button(
                         action: {
@@ -76,10 +76,10 @@ struct AddFolderView: View {
                             }
                         },
                         label: {
-                        Text("Create the Folder!")
-                            .padding()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    })
+                            Text(StringConstant.createNewFolder)
+                                .padding()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        })
                     
                 }
                 .padding()

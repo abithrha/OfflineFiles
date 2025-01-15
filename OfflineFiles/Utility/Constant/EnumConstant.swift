@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum SortOption: String, CaseIterable, Identifiable {
-    case name = "Name"
-    case creationDate = "Creation date"
+enum SortOption: String, CaseIterable {
+    case createdDate
+    case ascending
+    case descending
     case none
-    var id: Self { self }
 }

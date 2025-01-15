@@ -25,8 +25,13 @@ public class CoreDataManager {
     }
     
     
-    func fetchFolder(_ completion: @escaping ([FolderEntity]) -> Void) {
-        let fetchFolders = NSFetchRequest<FolderEntity>(entityName: "FolderEntity")
+    func fetchFolder(sortby: SortOption, _ completion: @escaping ([FolderEntity]) -> Void) {
+        let fetchFolders: NSFetchRequest<FolderEntity> = FolderEntity.fetchRequest()
+        if sortby != .none {
+            let keyPath = configKeyPath(option: sortby)
+            let isAscending = (sortby == .ascending)
+            fetchFolders.sortDescriptors = [NSSortDescriptor(key: keyPath, ascending: isAscending)]
+        }
         do {
             let savedFolders = try container.viewContext.fetch(fetchFolders)
             completion(savedFolders)
@@ -43,4 +48,14 @@ public class CoreDataManager {
         }
     }
     
+    func configKeyPath(option: SortOption) -> String {
+        switch option {
+        case .createdDate:
+            return "creationDate"
+        case .ascending, .descending:
+            return "name"
+        case .none:
+            return ""
+        }
+    }
 }
